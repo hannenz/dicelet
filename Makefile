@@ -11,6 +11,7 @@ SOURCES = src/DiceletDocklet.vala\
 		src/DiceletDockItem.vala\
 		src/DiceletPreferences.vala\
 		src/Die.vala\
+		src/DiceCup.vala
 
 UIFILES =
 

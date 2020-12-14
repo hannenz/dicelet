@@ -1,5 +1,8 @@
 namespace Dicelet {
 
+	/**
+	 * Class that represents a single die
+	 */
 	public class Die {
 
 		/**

@@ -2,16 +2,18 @@
 
 namespace Dicelet {
 	[CCode (cheader_filename = "src/DiceletDocklet.h")]
-	public class DiceSet {
+	public class DiceCup {
 		public GLib.List<Dicelet.Die> dice;
-		public DiceSet (int[] faces);
+		public int sum;
+		public DiceCup (int[] faces);
+		public int roll ();
 		public string to_string ();
 	}
 	[CCode (cheader_filename = "src/DiceletDocklet.h")]
 	public class DiceletDockItem : Plank.DockletItem {
 		protected int current_set;
 		protected GLib.List<Dicelet.Die> dice;
-		protected GLib.List<Dicelet.DiceSet> dicesets;
+		protected GLib.List<Dicelet.DiceCup> dicecups;
 		protected int sum;
 		public DiceletDockItem ();
 		protected override void draw_icon (Plank.Surface surface);

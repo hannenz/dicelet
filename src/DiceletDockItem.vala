@@ -7,41 +7,17 @@ namespace Dicelet {
 	protected List<Die> dice;
 
 
-	public class DiceSet {
-
-		public List<Die> dice;
-
-		public DiceSet(int[] faces) {
-			dice = new List<Die>();
-			for (int i = 0; i < faces.length; i++) {
-				dice.append(new Die(faces[i]));
-			}
-		}
-
-		public string to_string() {
-			string str = "";
-			foreach (Die die in this.dice) {
-				str += ", D%u".printf(die.n_faces);
-			}
-			return str;
-		}
-	}
-
-
-
 	public class DiceletDockItem : DockletItem {
 
 		protected List<Die> dice;
 
-		protected List<DiceSet> dicesets;
+		protected List<DiceCup> dicecups;
 
 		protected int current_set;
 
 		Gdk.Pixbuf icon_pixbuf;
 
 		DiceletPreferences prefs;
-
-	
 
 		protected int sum = 0;
 
@@ -53,18 +29,24 @@ namespace Dicelet {
 
 		/* Constructor */
 		construct {
-			dicesets = new List<DiceSet>();
-			dicesets.append(new DiceSet({4}));
-			dicesets.append(new DiceSet({6}));
-			dicesets.append(new DiceSet({8}));
-			dicesets.append(new DiceSet({10}));
-			dicesets.append(new DiceSet({12}));
-			dicesets.append(new DiceSet({20}));
-			current_set = 1;
 
 			// Init Logger (logsto console, Do `killall plank ; sudo plank` in terminal` to see the log
 			Logger.initialize("dicelet");
 			Logger.DisplayLevel = LogLevel.NOTIFY;
+
+			dicecups = new List<DiceCup>();
+
+			dicecups.append(new DiceCup({4}));
+			dicecups.append(new DiceCup({6}));
+			dicecups.append(new DiceCup({6, 6}));
+			dicecups.append(new DiceCup({3, 2, 3, 7, 7, 1, 2, 2}));
+			dicecups.append(new DiceCup({8}));
+			dicecups.append(new DiceCup({10}));
+			dicecups.append(new DiceCup({12}));
+			dicecups.append(new DiceCup({20}));
+			current_set = 1;
+
+
 
 			// Get preferences (Where do we set them?? They are not in gsettings!!
 			prefs = (DiceletPreferences) Prefs;
@@ -81,7 +63,6 @@ namespace Dicelet {
 			catch (Error e) {
 				warning("Error: " + e.message);
 			}
-
 		}
 
 
@@ -113,8 +94,8 @@ namespace Dicelet {
 								 Cairo.FontWeight.BOLD);
 			ctx.set_font_size(12);
 			ctx.move_to(10, 30);
-			// var diceset = dicesets.nth_data(current_set);
-			// ctx.show_text("%uD%u".printf(diceset.n_dice, diceset.n_faces));
+			var dicecup = dicecups.nth_data(current_set);
+			ctx.show_text("%s: %u".printf(dicecup.to_string(), sum));
 
 		}
 
@@ -122,13 +103,8 @@ namespace Dicelet {
 
 		protected void roll() {
 
-			sum = 0;
-			var diceset = this.dicesets.nth_data(this.current_set);
-			foreach(Die die in diceset.dice) {
-				var result = die.roll();
-				Logger.notification("Let me tell you: %u".printf(result));
-				sum += result;
-			}
+			var dicecup = this.dicecups.nth_data(this.current_set);
+			sum = dicecup.roll();
 		}
 
 
@@ -145,7 +121,7 @@ namespace Dicelet {
 			if (button == PopupButton.LEFT) {
 
 				roll();
-				Logger.notification("Rolled a %u".printf(sum));
+				Logger.notification("Rolled a %s, result (sum): %u".printf(dicecups.nth_data(current_set).to_string(), sum));
 
 				return AnimationType.BOUNCE;
 			}
@@ -156,14 +132,15 @@ namespace Dicelet {
 
 		public override Gee.ArrayList<Gtk.MenuItem> get_menu_items() {
 			var items = new Gee.ArrayList<Gtk.MenuItem>();
-			for (int i = 0; i < dicesets.length(); i++) {
-				var diceset = dicesets.nth_data(i);
-				string str = diceset.to_string();
+			for (int i = 0; i < dicecups.length(); i++) {
+				var dicecup = dicecups.nth_data(i);
+				string str = dicecup.to_string();
+				int n = i;
 
 				var item = create_literal_menu_item(str);
 				item.activate.connect(() => {
-					Logger.notification ("Current: %u".printf(i));
-					current_set = i;
+					this.current_set = n;
+					Logger.notification ("Current set: %u: %s".printf(this.current_set, this.dicecups.nth_data(this.current_set).to_string()));
 					reset_icon_buffer();
 				});
 				items.add(item);
