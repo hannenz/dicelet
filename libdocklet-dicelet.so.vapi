@@ -12,7 +12,6 @@ namespace Dicelet {
 	[CCode (cheader_filename = "src/DiceletDocklet.h")]
 	public class DiceletDockItem : Plank.DockletItem {
 		protected int current_set;
-		protected GLib.List<Dicelet.Die> dice;
 		protected GLib.List<Dicelet.DiceCup> dicecups;
 		protected int sum;
 		public DiceletDockItem ();
@@ -39,8 +38,6 @@ namespace Dicelet {
 		public int last_roll { get; set; }
 		public int n_faces { get; set; }
 	}
-	[CCode (cheader_filename = "src/DiceletDocklet.h")]
-	protected static GLib.List<Dicelet.Die> dice;
 	[CCode (cheader_filename = "src/DiceletDocklet.h")]
 	public const string G_RESOURCE_PATH;
 }

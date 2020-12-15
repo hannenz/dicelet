@@ -4,16 +4,21 @@ namespace Dicelet {
 
 	public class DiceCup {
 
+		/**
+		 * List of dice in the cup;
+		 */
 		public List<Die> dice;
 		
+		/**
+		 * @var int
+		 * Sum of all dice in the cup
+		 */
 		public int sum;
-
 
 
 		public DiceCup(int[] faces) {
 
 			sum = 0;
-
 			dice = new List<Die>();
 
 			for (int i = 0; i < faces.length; i++) {
@@ -34,6 +39,7 @@ namespace Dicelet {
 			}
 			return sum;
 		}
+
 
 		public string to_string() {
 			string str = "";
